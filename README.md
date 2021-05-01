@@ -34,8 +34,8 @@ inactive.
 A tick counts as active time if you have been idle for less then `IDLE_TIME` (I
 use 5 min). If I attend a virtual meeting I use slightly higher thresholds.
 
-I personally check if Slack is open, as queue to whether I'm «working» or not.
-If i close Slack, i don't register active time. This is configurable. This has
+I personally check if Slack is open, as a signal to whether I'm «working» or not.
+If i close Slack, i don't register active time. This is configurable. This also has
 the effect of making me mindful about closing work related programs when I'm
 actually not working but still use my laptop for smaller stuff.
 
@@ -56,7 +56,7 @@ system, but feel free to add support for others.
 
 ## Installation
 
-Crontab only have minutes as its smallest unit, and i wanted to collect data
+Crontab only have minutes as its smallest unit, and I wanted to collect data
 every 10th second. I could make it into a running daemon, but this was just the
 simplest way about:
 

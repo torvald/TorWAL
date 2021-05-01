@@ -32,3 +32,5 @@ PATTERNS_CATEGORIES = [
 ]
 
 NEEDED_PACKAGES = ["xprintidle", "xdotool"]
+
+system_interface = system.LinuxX

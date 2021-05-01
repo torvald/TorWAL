@@ -32,7 +32,7 @@ window (it's title) you are currently active on and for how long you have been
 inactive.
 
 A tick counts as active time if you have been idle for less then `IDLE_TIME` (I
-use 5 min). If I attend a digitial meeting I use slightly higher thresholds.
+use 5 min). If I attend a virtual meeting I use slightly higher thresholds.
 
 I personally check if Slack is open, as queue to whether I'm «working» or not.
 If i close Slack, i don't register active time. This is configurable. This has
@@ -43,11 +43,11 @@ actually not working but still use my laptop for smaller stuff.
 
 ### Register a tick
 
-    ./wal.py
+    ./wal.py reg
 
 ### Stats
 
-    ./way.py --stats [--since=YYYY-MM-DD] [--limit=20]
+    ./way.py stats [--since YYYY-MM-DD] [--limit 20]
 
 ## Support
 

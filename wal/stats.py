@@ -7,8 +7,7 @@ def pretty_dur(total_mins):
     return f"{hours}h{mins}m"
 
 
-def show_stats(connection, limit, since):
-
+def active_windows(connection, limit, since):
     print(f"--- Top {limit} active windows since {since} ---")
     cursor = connection.cursor()
     cursor.execute(
@@ -29,6 +28,9 @@ def show_stats(connection, limit, since):
         time = pretty_dur(mins)
         print(f"{time} of {active_win} ({category})")
 
+
+def top_categories(connection, limit, since):
+    cursor = connection.cursor()
     print(f"--- Top {limit} categories since {since} ---")
     cursor.execute(
         f"""SELECT count(*) as count, category FROM x_log
@@ -47,6 +49,9 @@ def show_stats(connection, limit, since):
         time = pretty_dur(mins)
         print(f"{time} of {active_win}")
 
+
+def active_time_per_day(connection, limit, since):
+    cursor = connection.cursor()
     print("--- Active time (at all hours) ---")
     cursor.execute(
         f"""
@@ -64,6 +69,12 @@ def show_stats(connection, limit, since):
         total += row[1]
         print(f"{day}: {active_hours}")
     print(pretty_dur(total / 6), "total")
+
+
+def show_stats(connection, limit, since):
+    active_windows(connection, limit, since)
+    top_categories(connection, limit, since)
+    active_time_per_day(connection, limit, since)
 
 
 def update_categories(connection):

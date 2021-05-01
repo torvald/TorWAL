@@ -1,0 +1,28 @@
+
+DATABASE_FILE = "/home/user/wal.db"
+
+DISPLAY = ":0"
+
+FIVE_MIN = 5 * 60
+FIVTEEN_MIN = 15 * 60
+ALLOW_IDLE_TIME = FIVE_MIN
+
+IS_ACTIVE_WHERE = (
+    f"(idle < {ALLOW_IDLE_TIME} or (active_win LIKE 'Meet%' and idle < {FIVTEEN_MIN}))"
+)
+
+IGNORE_WHERE = "active_win NOT LIKE '%Race – Emilia Romagna Grand Prix%'"
+
+# Order is important, latter items can override former
+PATTERNS_CATEGORIES = [
+    # Browesers
+    ("%Firefox%", "Firefox (uncategorized)"),
+    # Browser sites overrides
+    ("%DuckDuckGo%", "Firefox - DuckDuckGo"),
+    ("%Pull Request%", "Firefox - GitHub Pull Request"),
+    # Other apps
+    ("%bash%", "Terminal (uncategorized)"),
+    ("%VIM%", "VIM"),
+    ("Slack%", "Slack"),
+    ("%Signal%", "Signal"),
+]

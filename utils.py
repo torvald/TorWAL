@@ -1,5 +1,5 @@
-import subprocess
 import os
+import subprocess
 
 
 def system_cmd(cmd, envs=None):

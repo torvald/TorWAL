@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
+import argparse
 import sqlite3
-import sys
 from datetime import date
 
 import config
 from utils import cmd_exitcode
+
 
 def register_activity(connection):
     if config.ACTIVITY_FILTER_CMD:
@@ -56,16 +57,7 @@ def pretty_dur(total_mins):
     return f"{hours}h{mins}m"
 
 
-def show_stats(connection, other_args):
-    today = date.today()
-    since = today.strftime("%Y-%m-%d")
-
-    limit = 10
-    for arg in other_args:
-        if "--since" in arg:
-            since = arg.split("=")[1]
-        if "--limit" in arg:
-            limit = arg.split("=")[1]
+def show_stats(connection, limit, since):
 
     print(f"--- Top {limit} active windows since {since} ---")
     cursor = connection.cursor()
@@ -138,12 +130,35 @@ if __name__ == "__main__":
     pre_check()
     connection = setup_sqlite()
 
-    if "--stats" in sys.argv:
-        update_categories(connection)
-        other_args = sys.argv[2:]
-        show_stats(connection, other_args)
-    else:
-        register_activity(connection)
+    parser = argparse.ArgumentParser(
+        prog="wal.py",
+        description="Window Activity Logger (WAL!) - a tool to collect and make stats of your window use (in Linux).",
+    )
 
-# battery0_percent = cmd_output("acpi | grep 'battery 0' | egrep '[0-9]*%' -o").strip()
-# battery1_percent = cmd_output("acpi | grep 'Battery 1' | egrep '[0-9]*%' -o").strip()
+    subparsers = parser.add_subparsers(dest="action")
+
+    reg_parser = subparsers.add_parser("reg", help="Register tick")
+    stats_parser = subparsers.add_parser("stats", help="Show stats")
+    stats_parser.add_argument(
+        "--limit",
+        dest="limit",
+        help="(stats) Show number of items in stats tables",
+        default=10,
+        metavar=10,
+        type=int,
+    )
+    stats_parser.add_argument(
+        "--since",
+        dest="since",
+        help="(stats) Show stance since YYYY-MM-DD (defaults to today)",
+        default=date.today().strftime("%Y-%m-%d"),
+        metavar="YYY-MM-DD",
+    )
+
+    args = parser.parse_args()
+
+    if args.action == "stats":
+        update_categories(connection)
+        show_stats(connection, args.limit, args.since)
+    elif args.action == "reg":
+        register_activity(connection)

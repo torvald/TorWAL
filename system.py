@@ -8,7 +8,9 @@ class SystemInterface:
     def idle_sec(self) -> int:
         pass
 
+
 # Choose your implementation in the config.py
+
 
 class LinuxX(SystemInterface):
     def active_window(self) -> str:
@@ -25,6 +27,7 @@ class LinuxX(SystemInterface):
         idle_ms = cmd_output("/usr/bin/xprintidle").strip()
         idle_sec = round(int(idle_ms) / 1000)
         return idle_sec
+
 
 class MacOS(SystemInterface):
     pass

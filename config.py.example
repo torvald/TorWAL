@@ -1,7 +1,11 @@
-
 DATABASE_FILE = "/home/user/wal.db"
 
 DISPLAY = ":0"
+
+# Add a command that, if fails, we dont registe activity. This way, if you only
+# want to register activity for work, closing Slack can stop logging activity.
+# ACTIVITY_FILTER_CMD = "ps aux | grep slac[k]"
+ACTIVITY_FILTER_CMD = None
 
 FIVE_MIN = 5 * 60
 FIVTEEN_MIN = 15 * 60
@@ -26,3 +30,5 @@ PATTERNS_CATEGORIES = [
     ("Slack%", "Slack"),
     ("%Signal%", "Signal"),
 ]
+
+NEEDED_PACKAGES = ["xprintidle", "xdotool"]

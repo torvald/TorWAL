@@ -1,54 +1,23 @@
 #!/usr/bin/env python3
 
-import os
 import sqlite3
-import subprocess
 import sys
 from datetime import date
 
 import config
-
-def system_cmd(cmd):
-    os_env = os.environ.copy()
-    os_env["DISPLAY"] = config.DISPLAY
-    proc = subprocess.Popen(
-        cmd,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        shell=True,
-        universal_newlines=True,
-        env=os_env,
-    )
-    std_out, std_err = proc.communicate()
-    return proc.returncode, std_out, std_err
-
-
-def cmd_exitcode(cmd):
-    exit_code, _, _ = system_cmd(cmd)
-    return exit_code
-
-
-def cmd_output(cmd):
-    _, output, _ = system_cmd(cmd)
-    return output
-
+from utils import cmd_exitcode
 
 def register_activity(connection):
-    if cmd_exitcode("ps aux | grep slac[k]") == 1:
-        print("Slack is not open, we assume that means not work")
-        return
+    if config.ACTIVITY_FILTER_CMD:
+        if cmd_exitcode(config.ACTIVITY_FILTER_CMD) == 1:
+            print("ACTIVITY_FILTER_CMD failed, so we dont register activity now")
+            return
+
+    system_interface = config.system_interface()
+    idle_sec = system_interface.idle_sec()
+    active_window = system_interface.active_window()
 
     cursor = connection.cursor()
-
-    idle_ms = cmd_output("/usr/bin/xprintidle").strip()
-    idle_sec = round(int(idle_ms) / 1000)
-
-    active_window_id = cmd_output(
-        "xprop -root 32x '\t$0' _NET_ACTIVE_WINDOW | cut -f 2"
-    ).strip()
-    active_window = cmd_output(f"xprop -id {active_window_id} _NET_WM_NAME")
-    active_window = active_window.replace('_NET_WM_NAME(UTF8_STRING) = "', "")
-    active_window = active_window.strip()[:-1]
 
     insert_query = (
         f"INSERT into x_log (idle, active_win) VALUES ('{idle_sec}', '{active_window}')"
@@ -61,7 +30,7 @@ def register_activity(connection):
 
 def pre_check():
     # Pre-check
-    for package in ["xprintidle", "xdotool", "sqlite3"]:
+    for package in config.NEEDED_PACKAGES:
         if cmd_exitcode(f"whereis {package}") != 0:
             print(f"You need to install {package}")
 

@@ -10,15 +10,19 @@ def pretty_dur(total_mins):
 def active_windows(connection, limit, since):
     print(f"--- Top {limit} active windows since {since} ---")
     cursor = connection.cursor()
-    cursor.execute(
-        f"""SELECT count(*) as count, active_win, category FROM x_log
+
+    query = f"""SELECT count(*) as count, active_win, category FROM x_log
             WHERE {config.IS_ACTIVE_WHERE}
             AND timestamp > '{since}'
             AND {config.IGNORE_WHERE}
             GROUP BY active_win
             ORDER by 1 DESC
             LIMIT {limit}"""
-    )
+
+    if config.DEBUG:
+        print(query)
+
+    cursor.execute(query)
     rows = cursor.fetchall()
     for row in rows:
         count = row[0]
@@ -30,17 +34,21 @@ def active_windows(connection, limit, since):
 
 
 def top_categories(connection, limit, since):
-    cursor = connection.cursor()
     print(f"--- Top {limit} categories since {since} ---")
-    cursor.execute(
-        f"""SELECT count(*) as count, category FROM x_log
+    cursor = connection.cursor()
+
+    query = f"""SELECT count(*) as count, category FROM x_log
             WHERE {config.IS_ACTIVE_WHERE}
             AND timestamp > '{since}'
             AND {config.IGNORE_WHERE}
             GROUP BY category
             ORDER by 1 DESC
             LIMIT {limit}"""
-    )
+
+    if config.DEBUG:
+        print(query)
+
+    cursor.execute(query)
     rows = cursor.fetchall()
     for row in rows:
         count = row[0]
@@ -51,16 +59,21 @@ def top_categories(connection, limit, since):
 
 
 def active_time_per_day(connection, limit, since):
-    cursor = connection.cursor()
     print("--- Active time (at all hours) ---")
-    cursor.execute(
-        f"""
+
+    cursor = connection.cursor()
+    query = f"""
         select strftime('%Y-%m-%d',timestamp) AS 'day', count(*) from x_log
-        WHERE {config.IS_ACTIVE_WHERE} AND {config.IGNORE_WHERE}
+        WHERE {config.IS_ACTIVE_WHERE}
+        AND {config.IGNORE_WHERE}
         AND timestamp > '{since}'
         group by day;
         """
-    )
+
+    if config.DEBUG:
+        print(query)
+
+    cursor.execute(query)
     rows = cursor.fetchall()
     total = 0
     for row in rows:

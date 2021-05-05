@@ -1,6 +1,6 @@
-DATABASE_FILE = "/home/user/wal.db"
+DEBUG = False
 
-DISPLAY = ":0"
+DATABASE_FILE = "/home/user/wal.db"
 
 # Add a command that, if fails, we dont registe activity. This way, if you only
 # want to register activity for work, closing Slack can stop logging activity.

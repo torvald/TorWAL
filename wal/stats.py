@@ -40,6 +40,31 @@ def active_windows(connection, limit, since):
         time = pretty_dur(mins)
         print(f"{time} of {active_win} ({category})")
 
+def top_uncategorised(connection, limit, since):
+    print(f"--- Top {limit} uncategories since {since} ---")
+    cursor = connection.cursor()
+
+    query = f"""SELECT count(*) as ticks, active_win FROM x_log
+            WHERE {config.IS_ACTIVE_WHERE}
+            AND timestamp > '{since}'
+            AND {ignore_where()}
+            AND category is null
+            GROUP BY active_win
+            ORDER BY ticks DESC
+            LIMIT {limit}"""
+
+    if config.DEBUG:
+        print(query)
+
+    cursor.execute(query)
+    rows = cursor.fetchall()
+
+    for row in rows:
+        ticks = row[0]
+        active_win = row[1]
+        mins = round(ticks / 6, 2)
+        time = pretty_dur(mins)
+        print(f"{time} of {active_win}")
 
 def top_categories(connection, limit, since):
     print(f"--- Top {limit} categories since {since} ---")
@@ -99,6 +124,7 @@ def active_time_per_day(connection, limit, since):
 
 
 def show_stats(connection, limit, since):
+    top_uncategorised(connection, limit, since)
     active_windows(connection, limit, since)
     top_categories(connection, limit, since)
     active_time_per_day(connection, limit, since)

@@ -87,3 +87,5 @@ if __name__ == "__main__":
         stats.show_stats(connection, args.limit, args.since)
     elif args.action == "reg":
         register_activity(connection)
+    else:
+        parser.print_help(sys.stderr)

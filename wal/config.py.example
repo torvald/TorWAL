@@ -15,7 +15,7 @@ IS_ACTIVE_WHERE = (
     f"(idle < {ALLOW_IDLE_TIME} or (active_win LIKE 'Meet%' and idle < {FIVTEEN_MIN}))"
 )
 
-IGNORE_WHERE = "active_win NOT LIKE '%Race – Emilia Romagna Grand Prix%'"
+IGNORE_PATTERNS = ['%Race – Emilia Romagna Grand Prix%', '%WeeChat%']
 
 # Order is important, latter items can override former
 PATTERNS_CATEGORIES = [

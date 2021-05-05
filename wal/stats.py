@@ -1,6 +1,14 @@
 import config
 
 
+def ignore_where():
+    where_ignore_string = "1 = 1"
+    for pattern in config.IGNORE_PATTERNS:
+        where_ignore_string += f" AND active_win not LIKE '{pattern}'"
+
+    return where_ignore_string
+
+
 def pretty_dur(total_mins):
     hours = int(total_mins / 60)
     mins = str(int(total_mins % 60)).zfill(2)
@@ -14,7 +22,7 @@ def active_windows(connection, limit, since):
     query = f"""SELECT count(*) as count, active_win, category FROM x_log
             WHERE {config.IS_ACTIVE_WHERE}
             AND timestamp > '{since}'
-            AND {config.IGNORE_WHERE}
+            AND {ignore_where()}
             GROUP BY active_win
             ORDER by 1 DESC
             LIMIT {limit}"""
@@ -40,7 +48,7 @@ def top_categories(connection, limit, since):
     query = f"""SELECT count(*) as count, category FROM x_log
             WHERE {config.IS_ACTIVE_WHERE}
             AND timestamp > '{since}'
-            AND {config.IGNORE_WHERE}
+            AND {ignore_where()}
             GROUP BY category
             ORDER by 1 DESC
             LIMIT {limit}"""
@@ -65,7 +73,7 @@ def active_time_per_day(connection, limit, since):
     query = f"""
         select strftime('%Y-%m-%d',timestamp) AS 'day', count(*) from x_log
         WHERE {config.IS_ACTIVE_WHERE}
-        AND {config.IGNORE_WHERE}
+        AND {ignore_where()}
         AND timestamp > '{since}'
         group by day;
         """

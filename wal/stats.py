@@ -58,12 +58,18 @@ def top_categories(connection, limit, since):
 
     cursor.execute(query)
     rows = cursor.fetchall()
+
+    total_ticks = 0
+    for row in rows:
+        total_ticks += row[0]
+
     for row in rows:
         count = row[0]
         active_win = row[1] or "Uncatagories"
         mins = round(count / 6, 2)
         time = pretty_dur(mins)
-        print(f"{time} of {active_win}")
+        percent = round(count / total_ticks * 100)
+        print(f"{time} ({percent}%) of {active_win}")
 
 
 def active_time_per_day(connection, limit, since):

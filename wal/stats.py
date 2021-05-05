@@ -10,9 +10,11 @@ def ignore_where():
 
 
 def pretty_dur(total_mins):
+    sign = "-" if total_mins < 0 else ""
+    total_mins = abs(total_mins)
     hours = int(total_mins / 60)
     mins = str(int(total_mins % 60)).zfill(2)
-    return f"{hours}h{mins}m"
+    return f"{sign}{hours}h{mins}m"
 
 
 def active_windows(connection, limit, since):
@@ -102,11 +104,14 @@ def active_time_per_day(connection, limit, since):
 
     cursor = connection.cursor()
     query = f"""
-        select strftime('%Y-%m-%d',timestamp) AS 'day', count(*) from x_log
+        select strftime('%Y-%m-%d',timestamp) AS 'date',
+               strftime('%w',timestamp) AS 'day',
+               count(*)
+        FROM x_log
         WHERE {config.IS_ACTIVE_WHERE}
         AND {ignore_where()}
         AND timestamp > '{since}'
-        group by day;
+        group by date;
         """
 
     if config.DEBUG:
@@ -114,13 +119,28 @@ def active_time_per_day(connection, limit, since):
 
     cursor.execute(query)
     rows = cursor.fetchall()
+
     total = 0
+    time_bank = 0
+
     for row in rows:
-        day = row[0]
-        active_hours = pretty_dur(row[1] / 6)
-        total += row[1]
-        print(f"{day}: {active_hours}")
+        intraday_balance = 0
+        date, day, ticks = row[0], int(row[1]), row[2]
+        total += ticks
+
+        if day in range(1, 6) and day not in config.LEAVE_DAYS:
+            intraday_balance = ticks - (7.5 * 60 * 6)
+        if day in range(6, 7): # Sat or Sun
+            intraday_balance = ticks
+
+        time_bank += intraday_balance
+        pretty_intraday_balance = pretty_dur(intraday_balance / 6)
+        pretty_active_hours = pretty_dur(ticks / 6)
+        name_of_days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        print(f"{date} ({name_of_days[day-1]}): {pretty_active_hours} ({pretty_intraday_balance})")
+
     print(pretty_dur(total / 6), "total")
+    print(pretty_dur(time_bank / 6), "off balance during this period")
 
 
 def show_stats(connection, limit, since):

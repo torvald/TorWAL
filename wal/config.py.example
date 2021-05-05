@@ -7,6 +7,8 @@ DATABASE_FILE = "/home/user/wal.db"
 # ACTIVITY_FILTER_CMD = "ps aux | grep slac[k]"
 ACTIVITY_FILTER_CMD = None
 
+LEAVE_DAYS = ['2021-05-17']
+
 FIVE_MIN = 5 * 60
 FIVTEEN_MIN = 15 * 60
 ALLOW_IDLE_TIME = FIVE_MIN

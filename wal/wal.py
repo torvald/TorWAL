@@ -2,6 +2,7 @@
 
 import argparse
 import sqlite3
+import sys
 from datetime import date
 
 import config

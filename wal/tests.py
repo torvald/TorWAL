@@ -40,6 +40,7 @@ class TestStats(unittest.TestCase):
         self.assertEqual(pretty_dur(0), "0h00m")
         self.assertEqual(pretty_dur(121), "2h01m")
         self.assertEqual(pretty_dur(70), "1h10m")
+        self.assertEqual(pretty_dur(-70), "-1h10m")
 
 if __name__ == '__main__':
     unittest.main()

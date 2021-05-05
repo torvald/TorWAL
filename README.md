@@ -56,6 +56,8 @@ system, but feel free to add support for others.
 
 ## Installation
 
+Only standard python libraries are in use, so no need for virtual envs.
+
 Crontab only have minutes as its smallest unit, and I wanted to collect data
 every 10th second. I could make it into a running daemon, but this was just the
 simplest way about:

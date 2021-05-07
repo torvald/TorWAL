@@ -7,7 +7,7 @@ Perfect for tracking home office time!
 ## Example
 
 ```bash
-torvald@gauda ~ $ x-log.py --stats --since=2021-04-29 --limit=3
+torvald@gauda ~ $ wal.py stats --since=2021-04-29 --limit=3
 --- Top 3 active windows since 2021-04-29 ---
 0h44m of Meet – Introduction to new way of working - Google Chrome (Google Meet)
 0h31m of Incident report 2021-04-28 - Quip — Mozilla Firefox (Firefox - Quip)

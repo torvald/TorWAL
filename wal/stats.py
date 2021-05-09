@@ -128,16 +128,16 @@ def active_time_per_day(connection, limit, since):
         date, day, ticks = row[0], int(row[1]), row[2]
         total += ticks
 
-        if day in range(1, 6) and day not in config.LEAVE_DAYS:
+        if day in [1,2,3,4,5] and day not in config.LEAVE_DAYS:
             intraday_balance = ticks - (7.5 * 60 * 6)
-        if day in range(6, 7): # Sat or Sun
+        if day in [6,0]: # Sat or Sun
             intraday_balance = ticks
 
         time_bank += intraday_balance
         pretty_intraday_balance = pretty_dur(intraday_balance / 6)
         pretty_active_hours = pretty_dur(ticks / 6)
-        name_of_days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-        print(f"{date} ({name_of_days[day-1]}): {pretty_active_hours} ({pretty_intraday_balance})")
+        name_of_days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+        print(f"{date} ({name_of_days[day]}): {pretty_active_hours} ({pretty_intraday_balance})")
 
     print(pretty_dur(total / 6), "total")
     print(pretty_dur(time_bank / 6), "off balance during this period")

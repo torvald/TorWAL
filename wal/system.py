@@ -16,7 +16,7 @@ class LinuxX(SystemInterface):
     def active_window(self) -> str:
         envs = {"DISPLAY": ":0"}
         active_window_id = cmd_output(
-            "xprop -root 32x '\t$0' _NET_ACTIVE_WINDOW | cut -f 2", envs
+            "xprop -root 32x '\t$0' _NET_ACTIVE_WINDOW | cut -f 2", envs=envs
         ).strip()
         active_window = cmd_output(f"xprop -id {active_window_id} _NET_WM_NAME")
         active_window = active_window.replace('_NET_WM_NAME(UTF8_STRING) = "', "")

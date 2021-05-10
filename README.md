@@ -1,6 +1,8 @@
-# window-activity-logger
+# TorWAL
 
-Window Activity Logger (WAL!) - a tool to collect and make stats of your windows use (in Linux)
+Previously known as `window-activity-logger`, but as a friend pointed out, `TorWAL` was more fitting.
+
+Yeah, so this is my Window Activity Logger (WAL, not an overload term at all!) - a tool to collect and make stats of your windows use (in Linux)
 
 Perfect for tracking home office time!
 

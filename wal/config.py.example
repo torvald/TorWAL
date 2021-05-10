@@ -1,3 +1,5 @@
+import system
+
 DEBUG = False
 
 DATABASE_FILE = "/home/user/wal.db"

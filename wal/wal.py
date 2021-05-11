@@ -18,21 +18,16 @@ def register_activity(connection):
 
     system_interface = config.system_interface()
     idle_sec = system_interface.idle_sec()
-    active_window = system_interface.active_window()
+    active_window, active_app = system_interface.active_window()
 
     cursor = connection.cursor()
 
-    insert_query = (
-        f"INSERT into x_log (idle, active_win) VALUES ('{idle_sec}', '{active_window}')"
-    )
-    insert_query.replace("'", "")
-
-    cursor.execute(insert_query)
+    insert_query = "INSERT into x_log (idle, active_win, active_app) VALUES (?,?,?)"
+    cursor.execute(insert_query, (idle_sec, active_window, active_app))
     connection.commit()
 
 
 def pre_check():
-    # Pre-check
     for package in config.NEEDED_PACKAGES:
         if cmd_exitcode(f"whereis {package}") != 0:
             print(f"You need to install {package}")
@@ -50,7 +45,14 @@ def setup_sqlite():
         timestamp DATETIME DEFAULT (datetime('now','localtime'))
     );"""
     )
+
+    try:
+        cursor.execute("ALTER TABLE x_log ADD COLUMN active_app TEXT default null")
+    except sqlite3.OperationalError as e:
+        assert "duplicate column name: active_app" in str(e)
+
     return connection
+
 
 if __name__ == "__main__":
     pre_check()

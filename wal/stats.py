@@ -17,13 +17,13 @@ def pretty_dur(total_mins):
     return f"{sign}{hours}h{mins}m"
 
 
-def active_windows(connection, limit, since):
-    print(f"--- Top {limit} active windows since {since} ---")
+def active_windows(connection, limit, timestamp_where):
+    print(f"--- Top {limit} active windows ---")
     cursor = connection.cursor()
 
     query = f"""SELECT count(*) as count, active_win, category FROM x_log
             WHERE {config.IS_ACTIVE_WHERE}
-            AND timestamp > '{since}'
+            AND {timestamp_where}
             AND {ignore_where()}
             GROUP BY active_win
             ORDER by 1 DESC
@@ -42,13 +42,14 @@ def active_windows(connection, limit, since):
         time = pretty_dur(mins)
         print(f"{time} of {active_win} ({category})")
 
-def top_uncategorised(connection, limit, since):
-    print(f"--- Top {limit} uncategories since {since} ---")
+
+def top_uncategorised(connection, limit, timestamp_where):
+    print(f"--- Top {limit} uncategories ---")
     cursor = connection.cursor()
 
     query = f"""SELECT count(*) as ticks, active_win FROM x_log
             WHERE {config.IS_ACTIVE_WHERE}
-            AND timestamp > '{since}'
+            AND {timestamp_where}
             AND {ignore_where()}
             AND category is null
             GROUP BY active_win
@@ -68,13 +69,14 @@ def top_uncategorised(connection, limit, since):
         time = pretty_dur(mins)
         print(f"{time} of {active_win}")
 
-def top_categories(connection, limit, since):
-    print(f"--- Top {limit} categories since {since} ---")
+
+def top_categories(connection, limit, timestamp_where):
+    print(f"--- Top {limit} categories ---")
     cursor = connection.cursor()
 
     query = f"""SELECT count(*) as count, category FROM x_log
             WHERE {config.IS_ACTIVE_WHERE}
-            AND timestamp > '{since}'
+            AND {timestamp_where}
             AND {ignore_where()}
             GROUP BY category
             ORDER by 1 DESC
@@ -99,7 +101,7 @@ def top_categories(connection, limit, since):
         print(f"{time} ({percent}%) of {active_win}")
 
 
-def active_time_per_day(connection, limit, since):
+def active_time_per_day(connection, limit, timestamp_where):
     print("--- Active time (at all hours) ---")
 
     cursor = connection.cursor()
@@ -110,7 +112,7 @@ def active_time_per_day(connection, limit, since):
         FROM x_log
         WHERE {config.IS_ACTIVE_WHERE}
         AND {ignore_where()}
-        AND timestamp > '{since}'
+        AND {timestamp_where}
         group by date;
         """
 
@@ -128,26 +130,32 @@ def active_time_per_day(connection, limit, since):
         date, day, ticks = row[0], int(row[1]), row[2]
         total += ticks
 
-        if day in [1,2,3,4,5] and day not in config.LEAVE_DAYS:
+        if day in [1, 2, 3, 4, 5] and day not in config.LEAVE_DAYS:
             intraday_balance = ticks - (7.5 * 60 * 6)
-        if day in [6,0]: # Sat or Sun
+        if day in [6, 0]:  # Sat or Sun
             intraday_balance = ticks
 
         time_bank += intraday_balance
         pretty_intraday_balance = pretty_dur(intraday_balance / 6)
         pretty_active_hours = pretty_dur(ticks / 6)
-        name_of_days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-        print(f"{date} ({name_of_days[day]}): {pretty_active_hours} ({pretty_intraday_balance})")
+        name_of_days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+        print(
+            f"{date} ({name_of_days[day]}): {pretty_active_hours} ({pretty_intraday_balance})"
+        )
 
     print(pretty_dur(total / 6), "total")
     print(pretty_dur(time_bank / 6), "off balance during this period")
 
 
-def show_stats(connection, limit, since):
-    top_uncategorised(connection, limit, since)
-    active_windows(connection, limit, since)
-    top_categories(connection, limit, since)
-    active_time_per_day(connection, limit, since)
+def show_stats(connection, limit, since, before):
+    timestamp_where = f"timestamp > '{since}'"
+    if before:
+        timestamp_where += f" AND timestamp < '{before}'"
+
+    top_uncategorised(connection, limit, timestamp_where)
+    active_windows(connection, limit, timestamp_where)
+    top_categories(connection, limit, timestamp_where)
+    active_time_per_day(connection, limit, timestamp_where)
 
 
 def update_categories(connection):

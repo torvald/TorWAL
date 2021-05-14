@@ -1,12 +1,11 @@
 import unittest
-from utils import system_cmd
-from utils import cmd_output
-from system import LinuxX
+
 from stats import pretty_dur
+from system import LinuxX
+from utils import cmd_output, system_cmd
 
 
 class TestUtils(unittest.TestCase):
-
     def test_system_cmd_stdout(self):
         exit_code, std_out, std_err = system_cmd("echo hei")
         self.assertEqual(std_out, "hei\n")
@@ -30,7 +29,6 @@ class TestUtils(unittest.TestCase):
 
 
 class TestSystem(unittest.TestCase):
-
     def test_active_window(self):
         interface = LinuxX()
         active_window = interface.active_window()
@@ -44,7 +42,6 @@ class TestSystem(unittest.TestCase):
 
 
 class TestStats(unittest.TestCase):
-
     def test_pretty_dur(self):
         self.assertEqual(pretty_dur(60), "1h00m")
         self.assertEqual(pretty_dur(0), "0h00m")
@@ -53,5 +50,5 @@ class TestStats(unittest.TestCase):
         self.assertEqual(pretty_dur(-70), "-1h10m")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

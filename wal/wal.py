@@ -52,6 +52,7 @@ def setup_sqlite():
     )
     return connection
 
+
 if __name__ == "__main__":
     pre_check()
     connection = setup_sqlite()
@@ -76,8 +77,15 @@ if __name__ == "__main__":
     stats_parser.add_argument(
         "--since",
         dest="since",
-        help="(stats) Show stance since YYYY-MM-DD (defaults to today)",
+        help="(stats) Show stats since YYYY-MM-DD (defaults to today at 00:00)",
         default=date.today().strftime("%Y-%m-%d"),
+        metavar="YYY-MM-DD",
+    )
+
+    stats_parser.add_argument(
+        "--before",
+        dest="before",
+        help="(stats) Show stats before YYYY-MM-DD",
         metavar="YYY-MM-DD",
     )
 
@@ -85,7 +93,7 @@ if __name__ == "__main__":
 
     if args.action == "stats":
         stats.update_categories(connection)
-        stats.show_stats(connection, args.limit, args.since)
+        stats.show_stats(connection, args.limit, args.since, args.before)
     elif args.action == "reg":
         register_activity(connection)
     else:

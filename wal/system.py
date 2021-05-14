@@ -13,7 +13,7 @@ class SystemInterface:
 
 
 class LinuxX(SystemInterface):
-    envs = {'DISPLAY': ":0"}
+    envs = {"DISPLAY": ":0"}
 
     def active_window(self) -> str:
         active_window_id = cmd_output(

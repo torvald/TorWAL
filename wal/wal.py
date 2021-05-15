@@ -8,6 +8,7 @@ from datetime import date
 import config
 import stats
 import database as db
+from graphs import Graphs
 from utils import cmd_exitcode
 
 
@@ -47,6 +48,7 @@ if __name__ == "__main__":
     subparsers = parser.add_subparsers(dest="action")
 
     reg_parser = subparsers.add_parser("reg", help="Register tick")
+    graphs_parser = subparsers.add_parser("graphs", help="Create graphs!")
     stats_parser = subparsers.add_parser("stats", help="Show stats")
     stats_parser.add_argument(
         "--limit",
@@ -77,6 +79,10 @@ if __name__ == "__main__":
         stats.update_categories(connection)
         stats.show_stats(connection, args.limit, args.since, args.before)
     elif args.action == "reg":
+        stats.update_categories(connection)
         register_activity(connection)
+    elif args.action == "graphs":
+        g = Graphs(connection, None, None)
+        g.action()
     else:
         parser.print_help(sys.stderr)

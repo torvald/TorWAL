@@ -31,8 +31,9 @@ class TestUtils(unittest.TestCase):
 class TestSystem(unittest.TestCase):
     def test_active_window(self):
         interface = LinuxX()
-        active_window = interface.active_window()
+        active_window, active_app = interface.active_window()
         self.assertNotEqual(active_window, None)
+        self.assertNotEqual(active_app, None)
 
     def test_idle_sec(self):
         interface = LinuxX()

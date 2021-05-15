@@ -58,7 +58,7 @@ system, but feel free to add support for others.
 
 ## Installation
 
-Requires python 3.9 or newer.
+Requires python 3.5 or newer.
 
 Only standard python libraries are in use, so no need for virtual envs.
 

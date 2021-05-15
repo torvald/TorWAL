@@ -7,6 +7,7 @@ from datetime import date
 
 import config
 import stats
+import database as db
 from utils import cmd_exitcode
 
 
@@ -33,30 +34,10 @@ def pre_check():
             print(f"You need to install {package}")
 
 
-def setup_sqlite():
-    connection = sqlite3.connect(config.DATABASE_FILE)
-    cursor = connection.cursor()
-    cursor.execute(
-        """CREATE TABLE if not exists x_log(
-        id INTEGER PRIMARY KEY,
-        active_win TEXT,
-        category TEXT,
-        idle INTEGER,
-        timestamp DATETIME DEFAULT (datetime('now','localtime'))
-    );"""
-    )
-
-    try:
-        cursor.execute("ALTER TABLE x_log ADD COLUMN active_app TEXT default null")
-    except sqlite3.OperationalError as e:
-        assert "duplicate column name: active_app" in str(e)
-
-    return connection
-
-
 if __name__ == "__main__":
     pre_check()
-    connection = setup_sqlite()
+    connection = db.setup_sqlite(config.DATABASE_FILE)
+    db.run_migrations(config.DATABASE_FILE)
 
     parser = argparse.ArgumentParser(
         prog="wal.py",

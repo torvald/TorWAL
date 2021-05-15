@@ -58,6 +58,8 @@ system, but feel free to add support for others.
 
 ## Installation
 
+Requires python 3.9 or newer.
+
 Only standard python libraries are in use, so no need for virtual envs.
 
 Crontab only have minutes as its smallest unit, and I wanted to collect data
@@ -69,9 +71,9 @@ simplest way about:
 and add
 
     # m h  dom mon dow   command
-    * * * * * sleep 0; /path/to/folder/wal.py reg
-    * * * * * sleep 10; /path/to/folder/wal.py reg
-    * * * * * sleep 20; /path/to/folder/wal.py reg
-    * * * * * sleep 30; /path/to/folder/wal.py reg
-    * * * * * sleep 40; /path/to/folder/wal.py reg
-    * * * * * sleep 50; /path/to/folder/wal.py reg
+    * * * * * sleep 0; [/path/to/modern/python] /path/to/folder/wal.py reg
+    * * * * * sleep 10; [/path/to/modern/python] /path/to/folder/wal.py reg
+    * * * * * sleep 20; [/path/to/modern/python] /path/to/folder/wal.py reg
+    * * * * * sleep 30; [/path/to/modern/python] /path/to/folder/wal.py reg
+    * * * * * sleep 40; [/path/to/modern/python] /path/to/folder/wal.py reg
+    * * * * * sleep 50; [/path/to/modern/python] /path/to/folder/wal.py reg

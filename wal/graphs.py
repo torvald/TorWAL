@@ -1,7 +1,3 @@
-import seaborn as sns
-import matplotlib.pyplot as plt
-
-import pandas as pd
 
 
 class Graphs():
@@ -15,6 +11,9 @@ class Graphs():
         self.categories_per_day()
 
     def categories_per_day(self):
+        import seaborn as sns
+        import matplotlib.pyplot as plt
+        import pandas as pd
 
         sns.set_theme(style="whitegrid")
         f = plt.figure(figsize=(14, 8))

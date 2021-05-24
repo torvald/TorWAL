@@ -130,9 +130,9 @@ def active_time_per_day(connection, limit, timestamp_where):
         date, day, ticks = row[0], int(row[1]), row[2]
         total += ticks
 
-        if day in [1, 2, 3, 4, 5] and day not in config.LEAVE_DAYS:
+        if day in [1, 2, 3, 4, 5] and date not in config.LEAVE_DAYS:
             intraday_balance = ticks - (7.5 * 60 * 6)
-        if day in [6, 0]:  # Sat or Sun
+        else:  # Sat or Sun or LEAVE_DAYS
             intraday_balance = ticks
 
         time_bank += intraday_balance

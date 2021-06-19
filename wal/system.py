@@ -42,7 +42,7 @@ class LinuxX(SystemInterface):
         return idle_sec
 
     def current_ssid(self) -> str:
-        ssid = cmd_output("iwconfig | grep ESSID: | cut -d':' -f2 | tail -n 1").strip()
+        ssid = cmd_output("/usr/sbin/iwconfig | grep ESSID: | cut -d':' -f2 | tail -n 1").strip()
         ssid = ssid.replace('"', '')
         return ssid
         

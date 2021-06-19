@@ -21,11 +21,12 @@ def register_activity(connection):
     system_interface = config.system_interface()
     idle_sec = system_interface.idle_sec()
     active_window, active_app = system_interface.active_window()
+    ssid = system_interface.current_ssid()
 
     cursor = connection.cursor()
 
-    insert_query = "INSERT into x_log (idle, active_win, active_app) VALUES (?,?,?)"
-    cursor.execute(insert_query, (idle_sec, active_window, active_app))
+    insert_query = "INSERT into x_log (idle, active_win, active_app, ssid) VALUES (?,?,?,?)"
+    cursor.execute(insert_query, (idle_sec, active_window, active_app, ssid))
     connection.commit()
 
 
@@ -38,7 +39,6 @@ def pre_check():
 if __name__ == "__main__":
     pre_check()
     connection = db.setup_sqlite(config.DATABASE_FILE)
-    db.run_migrations(config.DATABASE_FILE)
 
     parser = argparse.ArgumentParser(
         prog="wal.py",
@@ -50,6 +50,8 @@ if __name__ == "__main__":
     reg_parser = subparsers.add_parser("reg", help="Register tick")
     graphs_parser = subparsers.add_parser("graphs", help="Create graphs!")
     stats_parser = subparsers.add_parser("stats", help="Show stats")
+    migration_parser = subparsers.add_parser("migration", help="Run DB migrations")
+
     stats_parser.add_argument(
         "--limit",
         dest="limit",
@@ -84,5 +86,7 @@ if __name__ == "__main__":
     elif args.action == "graphs":
         g = Graphs(connection, None, None)
         g.action()
+    elif args.action == "migration":
+        db.run_migrations(config.DATABASE_FILE)
     else:
         parser.print_help(sys.stderr)

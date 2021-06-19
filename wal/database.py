@@ -24,3 +24,8 @@ def run_migrations(database_file):
         cursor.execute("ALTER TABLE x_log ADD COLUMN active_app TEXT default null")
     except sqlite3.OperationalError as e:
         assert "duplicate column name: active_app" in str(e)
+
+    try:
+        cursor.execute("ALTER TABLE x_log ADD COLUMN ssid TEXT default null")
+    except sqlite3.OperationalError as e:
+        assert "duplicate column name: ssid" in str(e)

@@ -41,6 +41,11 @@ class TestSystem(unittest.TestCase):
         self.assertNotEqual(idle_sec, None)
         self.assertIsInstance(idle_sec, int)
 
+    def test_current_ssid(self):
+        interface = LinuxX()
+        ssid = interface.current_ssid()
+        self.assertIsInstance(ssid, str)
+        self.assertNotEqual(ssid, None)
 
 class TestStats(unittest.TestCase):
     def test_pretty_dur(self):

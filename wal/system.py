@@ -9,6 +9,8 @@ class SystemInterface:
     def idle_sec(self) -> int:
         pass
 
+    def current_ssid(self) -> str:
+        pass
 
 # Choose your implementation in the config.py
 
@@ -38,6 +40,12 @@ class LinuxX(SystemInterface):
         idle_ms = cmd_output("/usr/bin/xprintidle", envs=self.envs).strip()
         idle_sec = round(int(idle_ms) / 1000)
         return idle_sec
+
+    def current_ssid(self) -> str:
+        ssid = cmd_output("iwconfig | grep ESSID: | cut -d':' -f2 | tail -n 1").strip()
+        ssid = ssid.replace('"', '')
+        return ssid
+        
 
 
 class MacOS(SystemInterface):

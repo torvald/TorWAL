@@ -81,7 +81,6 @@ if __name__ == "__main__":
         stats.update_categories(connection)
         stats.show_stats(connection, args.limit, args.since, args.before)
     elif args.action == "reg":
-        stats.update_categories(connection)
         register_activity(connection)
     elif args.action == "graphs":
         g = Graphs(connection, None, None)

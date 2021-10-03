@@ -10,9 +10,9 @@ def ignore_where():
 
 
 def pretty_dur(total_mins):
-    sign = "-" if total_mins < 0 else ""
+    sign = "-" if total_mins < 0 else " "
     total_mins = abs(total_mins)
-    hours = int(total_mins / 60)
+    hours = str(int(total_mins / 60)).zfill(2)
     mins = str(int(total_mins % 60)).zfill(2)
     return f"{sign}{hours}h{mins}m"
 

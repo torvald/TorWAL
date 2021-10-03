@@ -1,4 +1,7 @@
 import config
+import time
+import datetime
+from utils import histogram_bar
 
 
 def ignore_where():
@@ -139,12 +142,57 @@ def active_time_per_day(connection, limit, timestamp_where):
         pretty_intraday_balance = pretty_dur(intraday_balance / 6)
         pretty_active_hours = pretty_dur(ticks / 6)
         name_of_days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+        histogram = create_histogram(connection, date)
         print(
-            f"{date} ({name_of_days[day]}): {pretty_active_hours} ({pretty_intraday_balance})"
+            f"{date} ({name_of_days[day]}): {pretty_active_hours} ({pretty_intraday_balance}) {histogram}"
         )
 
     print(pretty_dur(total / 6), "total")
     print(pretty_dur(time_bank / 6), "off balance during this period")
+
+
+def create_histogram(connection, date):
+
+    group_size_in_minutes = 30
+    time_interval_windows = 60 * group_size_in_minutes
+    groups_total = int((24 * 60 * 60) / time_interval_windows)
+
+    timestamp_start_of_day = int(
+        time.mktime(datetime.datetime.strptime(date, "%Y-%m-%d").timetuple())
+        / time_interval_windows
+    )
+
+    cursor = connection.cursor()
+    query = f"""
+        select strftime('%Y-%m-%d',timestamp) AS 'date',
+               strftime('%s',timestamp) / (60*{group_size_in_minutes}) as time_interval,
+               count(*)
+        FROM x_log
+        WHERE {config.IS_ACTIVE_WHERE}
+        AND date = '{date}'
+        GROUP BY time_interval
+        """
+
+    if config.DEBUG:
+        print(query)
+
+    cursor.execute(query)
+    rows = cursor.fetchall()
+
+    groups = {}
+    for row in rows:
+        # To make the numbers relative to the intra day
+        timestamp = row[1] - timestamp_start_of_day
+        count = row[2]
+        groups[timestamp] = count
+
+    histogram = ""
+    # We only record each 10 sec, so max value can be max 180 for i.e 30 min (1800s)
+    max_value = time_interval_windows / 10
+    for i in range(groups_total):
+        histogram += histogram_bar(groups[i], max_value) if i in groups else " "
+
+    return f"|{histogram}|"
 
 
 def show_stats(connection, limit, since, before):
@@ -164,5 +212,4 @@ def update_categories(connection):
         cursor.execute(
             f"update x_log set category = '{category}' where active_win LIKE '{pattern}';"
         )
-
     connection.commit()

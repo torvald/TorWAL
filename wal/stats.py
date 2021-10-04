@@ -128,10 +128,26 @@ def active_time_per_day(connection, limit, timestamp_where):
     total = 0
     time_bank = 0
 
+    last_date = None
+
     for row in rows:
         intraday_balance = 0
         date, day, ticks = row[0], int(row[1]), row[2]
         total += ticks
+
+        # Generating timeseries in sqlite is non-trivial, so instead of joining
+        # that into the query, i use this hack to fill in the dates with no
+        # data
+        if last_date:
+            this_date = datetime.datetime.strptime(date, "%Y-%m-%d")
+            next_date = last_date + datetime.timedelta(days=1)
+            while next_date != this_date:
+                null_date = next_date.strftime("%Y-%m-%d")
+                null_day = next_date.strftime("%a")
+                null_ticks = pretty_dur(0)
+                print(f"{null_date} ({null_day}): {null_ticks}")
+                next_date = next_date + datetime.timedelta(days=1)
+        last_date = datetime.datetime.strptime(date, "%Y-%m-%d")
 
         if day in [1, 2, 3, 4, 5] and date not in config.LEAVE_DAYS:
             intraday_balance = ticks - (7.5 * 60 * 6)
@@ -155,6 +171,7 @@ def create_histogram(connection, date):
 
     group_size_in_minutes = 30
     time_interval_windows = 60 * group_size_in_minutes
+    # i.e. for 30 minutes gropus, there will be 48 groups
     groups_total = int((24 * 60 * 60) / time_interval_windows)
 
     timestamp_start_of_day = int(

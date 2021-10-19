@@ -11,14 +11,10 @@ ACTIVITY_FILTER_CMD = None
 
 LEAVE_DAYS = ['2021-05-17']
 
-FIVE_MIN = 5 * 60
-FIVTEEN_MIN = 15 * 60
-ALLOW_IDLE_TIME = FIVE_MIN
-
-IS_ACTIVE_WHERE = (
-    f"(idle < {ALLOW_IDLE_TIME} or (active_win LIKE 'Meet%' and idle < {FIVTEEN_MIN}))"
-)
-
+IDLE_TIME_GENERAL = 5 * 60  # Five min
+IDLE_TIME_VIDEO_CONFERENCING = 20 * 60  # Twenty min
+VIDEO_CONFERENCING_APP_PATTERN = "Meet%"
+SSIDS_PATTERNS = ['%officessid%', '%oldofficeid%']
 IGNORE_PATTERNS = ['%Race – Emilia Romagna Grand Prix%', '%WeeChat%']
 
 # Order is important, latter items can override former

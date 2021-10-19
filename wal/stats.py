@@ -4,6 +4,14 @@ import datetime
 from utils import histogram_bar
 
 
+def active_where():
+    is_active_where = "("
+    is_active_where += f"idle < {config.IDLE_TIME_GENERAL} or (active_win LIKE '{config.VIDEO_CONFERENCING_APP_PATTERN}' and idle < {config.IDLE_TIME_VIDEO_CONFERENCING})"
+    for ssid in config.SSIDS_PATTERNS:
+        is_active_where += f" or ssid LIKE '{ssid}'"
+    is_active_where += ")"
+    return is_active_where
+
 def ignore_where():
     where_ignore_string = "1 = 1"
     for pattern in config.IGNORE_PATTERNS:
@@ -25,7 +33,7 @@ def active_windows(connection, limit, timestamp_where):
     cursor = connection.cursor()
 
     query = f"""SELECT count(*) as count, active_win, category FROM x_log
-            WHERE {config.IS_ACTIVE_WHERE}
+            WHERE {active_where()}
             AND {timestamp_where}
             AND {ignore_where()}
             GROUP BY active_win
@@ -51,7 +59,7 @@ def top_uncategorised(connection, limit, timestamp_where):
     cursor = connection.cursor()
 
     query = f"""SELECT count(*) as ticks, active_win FROM x_log
-            WHERE {config.IS_ACTIVE_WHERE}
+            WHERE {active_where()}
             AND {timestamp_where}
             AND {ignore_where()}
             AND category is null
@@ -78,7 +86,7 @@ def top_categories(connection, limit, timestamp_where):
     cursor = connection.cursor()
 
     query = f"""SELECT count(*) as count, category FROM x_log
-            WHERE {config.IS_ACTIVE_WHERE}
+            WHERE {active_where()}
             AND {timestamp_where}
             AND {ignore_where()}
             GROUP BY category
@@ -113,7 +121,7 @@ def active_time_per_day(connection, limit, timestamp_where):
                strftime('%w',timestamp) AS 'day',
                count(*)
         FROM x_log
-        WHERE {config.IS_ACTIVE_WHERE}
+        WHERE {active_where()}
         AND {ignore_where()}
         AND {timestamp_where}
         group by date;
@@ -185,7 +193,7 @@ def create_histogram(connection, date):
                strftime('%s',timestamp) / (60*{group_size_in_minutes}) as time_interval,
                count(*)
         FROM x_log
-        WHERE {config.IS_ACTIVE_WHERE}
+        WHERE {active_where()}
         AND date = '{date}'
         GROUP BY time_interval
         """

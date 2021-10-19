@@ -9,12 +9,27 @@ DATABASE_FILE = "/home/user/wal.db"
 # ACTIVITY_FILTER_CMD = "ps aux | grep slac[k]"
 ACTIVITY_FILTER_CMD = None
 
+# We assume 7.5 hours a day for Mon-Fri. Add sick days, holidays or general
+# leave here to expect 0 hours these days.
 LEAVE_DAYS = ['2021-05-17']
 
+# Adds a 5 min buffer on what counts as active time when. If active windows
+# matches VIDEO_CONFERENCING_APP_PATTERN then the IDLE_TIME_VIDEO_CONFERENCING
+# is used.
 IDLE_TIME_GENERAL = 5 * 60  # Five min
 IDLE_TIME_VIDEO_CONFERENCING = 20 * 60  # Twenty min
+
+# Patterns are added into SQLite queries with the `LIKE` operator.
 VIDEO_CONFERENCING_APP_PATTERN = "Meet%"
+
+# If non-empty, all time you are connected to these SSIDs counts as active
+# time. This is so that you can have your laptop open when you are at the
+# office, but you are not necessarily doing an equal amount of screen time as
+# you are at home.
 SSIDS_PATTERNS = ['%officessid%', '%oldofficeid%']
+
+# If you engage in activities during work hours that are definitely not work,
+# you can add the window titles here and ignore these to clear your conscience. 
 IGNORE_PATTERNS = ['%Race – Emilia Romagna Grand Prix%', '%WeeChat%']
 
 # Order is important, latter items can override former

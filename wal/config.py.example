@@ -26,7 +26,7 @@ VIDEO_CONFERENCING_APP_PATTERN = "Meet%"
 # time. This is so that you can have your laptop open when you are at the
 # office, but you are not necessarily doing an equal amount of screen time as
 # you are at home.
-SSIDS_PATTERNS = ['%officessid%', '%oldofficeid%']
+SSIDS_PATTERNS = ['%office_SSID%', '%old_office_SSID%']
 
 # If you engage in activities during work hours that are definitely not work,
 # you can add the window titles here and ignore these to clear your conscience. 

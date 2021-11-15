@@ -100,7 +100,12 @@ interface](https://github.com/torvald/TorWAL/blob/main/wal/system.py).
 
 Requires python 3.5 or newer.
 
-Only standard python libraries are in use, so no need for virtual envs.
+Only standard python libraries are in use, so no need for virtual envs. To get
+started:
+
+    cp config.py.example config.py
+    vim config.py
+    ./wal.py
 
 Crontab only have minutes as its smallest unit, and I wanted to collect data
 every 10th second. I could make it into a running daemon, but this was just the

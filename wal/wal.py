@@ -5,7 +5,14 @@ import sqlite3
 import sys
 from datetime import date
 
-import config
+try:
+    import config
+except ImportError:
+    print("You need to make a copy of the config file first.")
+    print("$ cp config.py.example config.py")
+    print("$ vim config.py")
+    raise SystemExit
+
 import stats
 import database as db
 from graphs import Graphs

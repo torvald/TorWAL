@@ -15,7 +15,6 @@ except ImportError:
 
 import stats
 import database as db
-from graphs import Graphs
 from utils import cmd_exitcode
 
 
@@ -89,9 +88,6 @@ if __name__ == "__main__":
         stats.show_stats(connection, args.limit, args.since, args.before)
     elif args.action == "reg":
         register_activity(connection)
-    elif args.action == "graphs":
-        g = Graphs(connection, None, None)
-        g.action()
     elif args.action == "migration":
         db.run_migrations(config.DATABASE_FILE)
     else:

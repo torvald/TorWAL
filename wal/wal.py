@@ -54,7 +54,6 @@ if __name__ == "__main__":
     subparsers = parser.add_subparsers(dest="action")
 
     reg_parser = subparsers.add_parser("reg", help="Register tick")
-    graphs_parser = subparsers.add_parser("graphs", help="Create graphs!")
     stats_parser = subparsers.add_parser("stats", help="Show stats")
     migration_parser = subparsers.add_parser("migration", help="Run DB migrations")
 

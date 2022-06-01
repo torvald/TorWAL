@@ -6,11 +6,13 @@ def system_cmd(cmd, envs=None):
     proc = subprocess.run(
         cmd,
         shell=True,
-        check=True,
         capture_output=True,
         text=True,
         env={**os.environ, **(envs or {})},
     )
+    if proc.returncode != 0:
+        raise ValueError(f"Process returned nonzero: {proc.returncode}\n"
+                         f"stdout:\n{proc.stdout}\nstderr:\n{proc.stderr}")
     return proc.returncode, proc.stdout, proc.stderr
 
 

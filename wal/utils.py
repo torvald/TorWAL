@@ -3,24 +3,17 @@ import subprocess
 
 
 def system_cmd(cmd, envs=None):
-
-    os_env = os.environ.copy()
-    if envs:
-        for key, value in envs.items():
-            os_env[key] = value
-
-    proc = subprocess.Popen(
+    proc = subprocess.run(
         cmd,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
         shell=True,
-        universal_newlines=True,
-        env=os_env,
+        capture_output=True,
+        text=True,
+        env={**os.environ, **(envs or {})},
     )
-
-    std_out, std_err = proc.communicate()
-
-    return proc.returncode, std_out, std_err
+    if proc.returncode != 0:
+        raise ValueError(f"Process returned nonzero: {proc.returncode}\n"
+                         f"stdout:\n{proc.stdout}\nstderr:\n{proc.stderr}")
+    return proc.returncode, proc.stdout, proc.stderr
 
 
 def cmd_exitcode(cmd, envs=None):

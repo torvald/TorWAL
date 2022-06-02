@@ -53,6 +53,7 @@ if __name__ == "__main__":
 
     subparsers = parser.add_subparsers(dest="action")
 
+    back_fill_parser = subparsers.add_parser("back_fill", help="Register tick")
     reg_parser = subparsers.add_parser("reg", help="Register tick")
     stats_parser = subparsers.add_parser("stats", help="Show stats")
     migration_parser = subparsers.add_parser("migration", help="Run DB migrations")
@@ -68,14 +69,26 @@ if __name__ == "__main__":
     stats_parser.add_argument(
         "--since",
         dest="since",
-        help="(stats) Show stats since YYYY-MM-DD (defaults to today at 00:00)",
-        default=date.today().strftime("%Y-%m-%d"),
+        help="(stats) Show stats since YYYY-MM-DD (defaults to first of the month at 00:00)",
+        default=date.today().replace(day=1).strftime("%Y-%m-%d"),
         metavar="YYY-MM-DD",
     )
-
     stats_parser.add_argument(
         "--before",
         dest="before",
+        help="(stats) Show stats before YYYY-MM-DD",
+        metavar="YYY-MM-DD",
+    )
+
+    back_fill_parser.add_argument(
+        "--start",
+        dest="start",
+        help="(stats) Show stats since YYYY-MM-DD (defaults to first of the month at 00:00)",
+        metavar="YYY-MM-DD",
+    )
+    back_fill_parser.add_argument(
+        "--end",
+        dest="end",
         help="(stats) Show stats before YYYY-MM-DD",
         metavar="YYY-MM-DD",
     )
@@ -87,6 +100,8 @@ if __name__ == "__main__":
         stats.show_stats(connection, args.limit, args.since, args.before)
     elif args.action == "reg":
         register_activity(connection)
+    elif args.action == "back_fill":
+        db.back_fill(connection, args.start, args.end)
     elif args.action == "migration":
         db.run_migrations(config.DATABASE_FILE)
     else:
